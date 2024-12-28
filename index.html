@@ -15,31 +15,31 @@
         }
         h1 {
             position: absolute;
-            top: 40%;
+            top: 30%;
             left: 50%;
             transform: translate(-50%, -50%);
             color: #F4F5F7;
             font-family: "Impact, Charcoal, sans-serif";
-            font-size: 5em;
+            font-size: 3em;
             font-weight: 800;
             -webkit-user-select: none;
             user-select: none;
         }
         h2 {
             position: absolute;
-            top: 80%;
+            top: 60%;
             left: 50%;
             transform: translate(-50%, -50%);
             color: #F4F6F7;
             font-family: "Impact, Charcoal, sans-serif";
-            font-size: 5em;
+            font-size: 3em;
             font-weight: 800;
             -webkit-user-select: none;
             user-select: none;
         }
         h6 {
             position: absolute;
-            top: 90%;
+            top: 80%;
             left: 50%;
             transform: translate(-50%, -50%);
             color: #F4F6F7;
@@ -49,32 +49,26 @@
             -webkit-user-select: none;
             user-select: none;
         }
+        button {
+            position: absolute;
+            bottom: 1%;
+            right: 1%;
+            padding: 10px 20px;
+            background-color: #814caf;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1em;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
     <h1>Feliz cumpleaños</h1>
     <h2>Dai</h2>
     <h6>(Toca la pantalla y ve que pasa)</h6>
-    <button onclick="window.location.href = 'pag_con_palta.html';" style="position: absolute; bottom:1%; right: 1%; padding: 10px 20px; background-color: #814caf; color: white; border: none; border-radius: 5px; font-size: 1em; cursor: pointer;">Siguiente</button>
+    <button onclick="window.location.href = 'pag_con_palta.html';">Siguiente</button>
 
-    <script>
-        const img = document.getElementById('movingImage');
-
-        function moveImage() {
-            const x = Math.random() * (window.innerWidth - img.width);
-            const y = Math.random() * (window.innerHeight - img.height);
-            img.style.left = `${x}px`;
-            img.style.top = `${y}px`;
-        }
-
-        img.onclick = () => {
-            window.location.href = 'index.html';
-        };
-
-        setInterval(moveImage, 1000);
-        moveImage();
-    </script>
-    
     <canvas id="birthday"></canvas>
     <script>
         const PI2 = Math.PI * 2;

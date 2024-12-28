@@ -15,23 +15,10 @@
         }
         h1 {
             position: absolute;
-            top: 40%;
+            top: 30%;
             left: 50%;
             transform: translate(-50%, -50%);
             color: #F4F5F7;
-            font-family: "Impact, Charcoal, sans-serif";
-            font-size: 10vw;
-            font-weight: 800;
-            -webkit-user-select: none;
-            user-select: none;
-            text-align: center;
-        }
-        h2 {
-            position: absolute;
-            top: 70%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: #F4F6F7;
             font-family: "Impact, Charcoal, sans-serif";
             font-size: 8vw;
             font-weight: 800;
@@ -39,14 +26,27 @@
             user-select: none;
             text-align: center;
         }
-        h6 {
+        h2 {
             position: absolute;
-            top: 85%;
+            top: 60%;
             left: 50%;
             transform: translate(-50%, -50%);
             color: #F4F6F7;
             font-family: "Impact, Charcoal, sans-serif";
-            font-size: 4vw;
+            font-size: 6vw;
+            font-weight: 800;
+            -webkit-user-select: none;
+            user-select: none;
+            text-align: center;
+        }
+        h6 {
+            position: absolute;
+            top: 80%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #F4F6F7;
+            font-family: "Impact, Charcoal, sans-serif";
+            font-size: 3vw;
             font-weight: 800;
             -webkit-user-select: none;
             user-select: none;
@@ -58,10 +58,11 @@
     <h1>Atrapame, sí puedes</h1>
     <h2>Muajajaa</h2>
     <h6>(Toca a Palta Claus para ver tu regalo)</h6>
-    <img id="movingImage" src="assets/palta.png" alt="Click me" style="position: absolute; cursor: pointer; width: 20%; height: 10%;">
+    <img id="movingImage" src="assets/palta.png" alt="Click me" style="position: absolute; cursor: pointer; width: 30%; height: auto;">
 
     <script>
         const img = document.getElementById('movingImage');
+        let interval = 100;
 
         function moveImage() {
             const x = Math.random() * (window.innerWidth - img.width);
@@ -74,8 +75,13 @@
             window.location.href = 'regalo.html';
         };
 
-        setInterval(moveImage, 1000);
-        moveImage();
+        function graduallySlowDown() {
+            moveImage();
+            interval += 300; // Increase the interval by 500ms each time
+            setTimeout(graduallySlowDown, interval);
+        }
+
+        graduallySlowDown();
     </script>
     
     <canvas id="birthday"></canvas>
