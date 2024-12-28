@@ -77,7 +77,7 @@
 
         function graduallySlowDown() {
             moveImage();
-            interval += 300; // Increase the interval by 500ms each time
+            interval += 100; // Increase the interval by 500ms each time
             setTimeout(graduallySlowDown, interval);
         }
 
