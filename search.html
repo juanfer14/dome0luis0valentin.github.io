@@ -41,9 +41,11 @@
         </nav>
       </div>
       <div class="space-y-2">
-        <a href="#" class="text-sm text-gray-400 hover:text-white">Ayuda</a>
-        <a href="#" class="text-sm text-gray-400 hover:text-white">Sobre Nosotros</a>
-        <a href="#" class="flex items-center gap-2 text-sm text-red-400 hover:text-white">
+        <a href="#" aria-label="Página de preguntas frecuentes" class="text-sm text-gray-400 hover:text-white">ℹ️ Ayuda</a>
+        <br>
+        <a href="#" aria-label="Página sobre los creadores de playapp" class="text-sm text-gray-400 hover:text-white">Sobre Nosotros</a>
+        <br>
+        <a href="#" aria-label="Cerrar seción de playapp" class="flex items-center gap-2 text-sm text-red-400 hover:text-white">
           <span>🚪</span> Cerrar Sesión
         </a>
       </div>
@@ -67,45 +69,13 @@
         </div>
       </header>
 
-      <!-- Map and Filters -->
-      <!-- <div class="relative flex-1">
-        
-        <div id="map" style="width: 75%"></div>
-
-        <div role="main" aria-roledescription="Panel de Filtro"  style="width: 20%" class="z-10 absolute top-6 right-6 w-64 bg-black bg-opacity-80 text-white rounded-lg p-4 space-y-3">
-          <h2 class="text-lg font-bold flex items-center gap-2">
-            <span>⚙️</span> PUNTUAR LUGARES POR
-          </h2>
-          <div class="space-y-2">
-            <button class="w-full flex items-center gap-2 bg-gray-900 px-3 py-2 rounded hover:bg-gray-800">
-              🏖️ CONTAMINACIÓN EN LA ARENA
-            </button>
-            <button class="w-full flex items-center gap-2 bg-gray-900 px-3 py-2 rounded hover:bg-gray-800">
-              🌊 CONTAMINACIÓN DEL AGUA
-            </button>
-            <button class="w-full flex items-center gap-2 bg-gray-900 px-3 py-2 rounded hover:bg-gray-800">
-              👫 CONCURRENCIA
-            </button>
-            <button class="w-full flex items-center gap-2 bg-gray-900 px-3 py-2 rounded hover:bg-gray-800">
-              🧹 LIMPIEZA
-            </button>
-            <button class="w-full flex items-center gap-2 bg-gray-900 px-3 py-2 rounded hover:bg-gray-800">
-              ☮️ TRANQUILIDAD
-            </button>
-            <button class="w-full flex items-center gap-2 bg-gray-900 px-3 py-2 rounded hover:bg-gray-800">
-              🎡 ATRACCIONES
-            </button>
-          </div>
-        </div>
-      </div> -->
-
       <div class="relative flex-1">
         <!-- Map -->
         <div id="map" style="width: 75%"></div>
       
         <!-- Dropdown Toggle Button -->
         <div class="absolute top-6 right-6 z-20">
-          <button id="dropdownToggle" class="flex items-center gap-2 bg-black bg-opacity-80 text-white px-4 py-2 rounded-lg hover:bg-opacity-90">
+          <button id="dropdownToggle" class="flex items-center gap-2 bg-black bg-opacity-80 text-white px-4 py-2 rounded-lg hover:bg-opacity-90" tabindex="0">
             <span>⚙️</span> PUNTUAR LUGARES POR
           </button>
       
@@ -140,24 +110,71 @@
   <script>
     const toggleBtn = document.getElementById('dropdownToggle');
     const dropdown = document.getElementById('dropdownContent');
-
+  
     toggleBtn.addEventListener('click', () => {
       dropdown.classList.toggle('hidden');
     });
-
+  
     const map = L.map('map').setView([-34.6037, -58.3816], 10);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; OpenStreetMap contributors'
     }).addTo(map);
-
+  
+    // Definición de iconos personalizados
+    const icons = {
+      contaminacionArena: L.icon({
+        iconUrl: 'https://cdn4.iconfinder.com/data/icons/small-n-flat/24/map-marker-1024.png',
+        iconSize: [32, 32],
+        iconAnchor: [16, 32],
+        popupAnchor: [0, -32]
+      }),
+      contaminacionAgua: L.icon({
+        iconUrl: 'https://cdn.vectorstock.com/i/1000v/05/44/map-marker-icon-vector-12860544.jpg',
+        iconSize: [32, 32],
+        iconAnchor: [16, 32],
+        popupAnchor: [0, -32]
+      }),
+      concurrencia: L.icon({
+        iconUrl: 'https://www.clipartmax.com/png/middle/86-869339_yellow-map-marker-png.png',
+        iconSize: [32, 32],
+        iconAnchor: [16, 32],
+        popupAnchor: [0, -32]
+      }),
+      limpieza: L.icon({
+        iconUrl: 'https://cdn4.iconfinder.com/data/icons/small-n-flat/24/map-marker-1024.png',
+        iconSize: [32, 32],
+        iconAnchor: [16, 32],
+        popupAnchor: [0, -32]
+      }),
+      tranquilidad: L.icon({
+        iconUrl: 'https://www.clipartmax.com/png/middle/86-869339_yellow-map-marker-png.png',
+        iconSize: [32, 32],
+        iconAnchor: [16, 32],
+        popupAnchor: [0, -32]
+      }),
+      atracciones: L.icon({
+        iconUrl: 'https://www.kindpng.com/picc/m/724-7245648_google-maps-marker-transparent-clipart-jpg-black-and.png',
+        iconSize: [32, 32],
+        iconAnchor: [16, 32],
+        popupAnchor: [0, -32]
+      })
+    };
+  
+    // Coordenadas con tipo de icono asociado
     const beachLocations = [
-      [-34.588, -58.37], [-34.60, -58.45], [-34.62, -58.40], [-34.63, -58.42], [-34.65, -58.35],
-      [-34.66, -58.30], [-34.67, -58.25]
+      { coords: [-34.822267, -57.963088], icon: icons.contaminacionArena, name: "Punta Lara: 😒 2/10" },
+      { coords: [-35.263109, -57.236898], icon: icons.contaminacionAgua, name: "Punta Indio: 😊 8/10" },
+      { coords: [-34.87, -57.83], icon: icons.concurrencia, name: "Playa Mas o Menos: 😐 6/10" },
+      { coords: [-35.263109, -57.236898], icon: icons.contaminacionArena, name: "Playa Bagliardi: 😒 2/10" },
+      { coords: [-34.854337, -57.840149], icon: icons.tranquilidad, name: "Palo Blanco: 😐 5/10" },
+      { coords: [-34.831436, -57.871377], icon: icons.contaminacionArena, name: "Playa de la Isla Paulino: 😒 1/10" },
     ];
-
-    beachLocations.forEach((coords, i) => {
-      L.marker(coords).addTo(map).bindPopup(`Playa ${i + 1}`);
+  
+    // Agregar marcadores con iconos personalizados
+    beachLocations.forEach(({ coords, icon, name }) => {
+      L.marker(coords, { icon }).addTo(map).bindPopup(name);
     });
   </script>
+  
 </body>
 </html>

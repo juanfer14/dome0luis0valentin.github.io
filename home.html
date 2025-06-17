@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Playapp</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     body { font-family: 'Inter', sans-serif; }
@@ -15,21 +16,39 @@
     #log-section{
       padding: 4rem;
     }
+    #ayuda-ref{
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .option-header {
+        width: 100%;
+      }
+    /* Use a media query to add a break point at 800px: */
+    @media screen and (max-width: 800px) {
+      .option-header {
+        width: 10%;
+      }
+      .option-header-container{
+        width: 100%;
+      }
+    }
   </style>
 </head>
 <body class="bg-gray-100 text-gray-800">
 
   <!-- Header -->
-  <header class="bg-white shadow-md">
-    <div class="container mx-auto px-4 py-4 flex items-center justify-between">
-      <div class="flex items-center space-x-2">
-        <img src="https://img.icons8.com/ios-filled/50/beach.png" alt="Logo de Playapp" class="h-6">
-        <span class="font-bold text-xl">Playapp</span>
+  <header class="bg-gray-900 shadow-md">
+    <div class="option-header-container mx-auto px-4 py-4 flex items-center justify-between">
+      <div class="option-header items-center space-x-2">
+        <img src="https://img.icons8.com/ios-filled/50/ffffff/beach.png" alt="Logo de Playapp" class="h-6">
+        <span class="font-bold text-white text-xl">Playapp</span>
       </div>
-      <nav class="space-x-6 hidden md:flex">
-        <a href="#" class="text-gray-700 hover:text-black">Ayuda</a>
-        <button class="border px-4 py-2 rounded">Registrate</button>
-        <button class="border px-4 py-2 rounded bg-gray-200">Logeate</button>
+      <nav class="option-header space-x-6 hidden md:flex">
+        <a id="ayuda-ref" href="#" class="option-header text-white hover:text-gray-500">Ayuda</a>
+        <a id="ayuda-ref" href="#" class="option-header text-white hover:text-gray-500">Conocé más</a>
+        <button class="option-header border px-6 py-2 rounded bg-white hover:text-gray-500">Registrame</button>
+        <button class="option-header border px-6 py-2 rounded bg-white hover:text-gray-500">Logearme</button>
       </nav>
      
     </div>
@@ -41,7 +60,6 @@
       <div class="flex-1">
         <h1 class="text-6xl font-bold mb-4">Encontrá la mejor playa para vos y tu familia</h1>
         <p class="mb-6 text-gray-600">¿Alguna vez te preguntaste qué tan segura, higiénica, bonita o tranquila es playa a la que querés ir?</p>
-        <button class="bg-gray-800 text-white px-6 py-2 rounded">Conocé más</button>
       </div>
       <div class="flex-1">
         <img src="https://infogei.com/uploads/noticias/2/2023/01/20230107182009_rio.jpg" alt="Playa destacada" class="rounded-lg shadow-md">
@@ -50,7 +68,7 @@
   </section>
 
   <!-- Top-rated beaches -->
-  <section class="py-10" role="main" aria-describedby="Carrusel de imagenes de playas del Río de la Plata">
+  <section class="py-10" role="main" aria-label="Carrusel de imagenes de playas del Río de la Plata">
     <h2 class="text-center text-xl font-semibold mb-6">Conoce cuáles son las mejores playas del Río de la Plata</h2>
     <div class="flex justify-center gap-3 overflow-x-auto px-4 max-h-4px">
       <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSHfiR2ya7m-Se19ZqHxhP5EORNzw3tR6IKqw&s" class="rounded shadow-sm" alt="Varias personas nadando en el río en un día soleado" tabindex="0">
@@ -64,18 +82,18 @@
   </section>
   
     <!-- Testimonials -->
-    <section class="py-12 px-4" role="main" role="main" aria-describedby="testimonios">
+    <section class="py-12 px-4" role="main" aria-label="testimonios">
       <h2 class="text-center text-xl font-semibold mb-8">Algunas opiniones</h2>
       <div class="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
-        <div class="bg-white p-4 rounded-lg shadow text-sm" role="main" aria-describedby="Opinion 1">
+        <div class="bg-white p-4 rounded-lg shadow text-sm" role="main" aria-label="Opinion 1">
           <p>Sin lugar a dudas la playa de Punta Lara es la mejor a la que mi familia y yo hemos ido!!!</p>
           <div class="mt-4 text-gray-500 text-xs">Esteban Trabajos • 8:21 PM / Dec 21, 2022</div>
         </div>
-        <div class="bg-white p-4 rounded-lg shadow text-sm" role="main" aria-describedby="Opinion 2">
+        <div class="bg-white p-4 rounded-lg shadow text-sm" role="main" aria-label="Opinion 2">
           <p>He estado recorriendo muchas de las playas del Río de la Plata en este último mes, y he notado que es mucho más tranquilo ir los días de semana.</p>
           <div class="mt-4 text-gray-500 text-xs">Billy Puertas • 8:21 PM / Dec 21, 2022</div>
         </div>
-        <div class="bg-white p-4 rounded-lg shadow text-sm" role="main" aria-describedby="Opinion 3">
+        <div class="bg-white p-4 rounded-lg shadow text-sm" role="main" aria-label="Opinion 3">
           <p>Hace años que voy a la misma playa, todos los veranos, sin dudas Punta Indio es la mejor.</p>
           <div class="mt-4 text-gray-500 text-xs">Armando Paredes • 8:21 PM / Dec 21, 2022</div>
         </div>
@@ -112,20 +130,24 @@
   <div class="mx-auto py-12  rounded-lg shadow-md">
     <section class="mx-auto max-w-md bg-white">
       <div id="log-section">
-        <h2 class="text-center text-xl font-semibold mb-6">INGRESAR</h2>
+        <h2 class="text-center text-xl font-semibold mb-6">Registro de Usuarios</h2>
         <form action="D:\vd\Documents\Facultad 2024\DEU\project\dome0luis0valentin.github.io\search.html" class="space-y-4">
-          <input type="text" placeholder="Tu nombre" class="w-full border p-2 rounded">
-          <input type="email" placeholder="Email" class="w-full border p-2 rounded">
-          <input type="password" placeholder="Contraseña" class="w-full border p-2 rounded">
-          <button class="bg-gray-800 text-white w-full px-6 py-2 rounded"> 
-            INGRESAR
-          </button>
+          <label class="p-2">Nombre de Usuario<input id="input_name" type="text" placeholder="John Doe" aria-label="Nombre de usuario" class="w-full border p-2 rounded"></label>
+          <label class="p-2">Email <input type="email" placeholder="ejemplo@gmail.com" aria-label="Email del usuario" class="w-full border p-2 rounded">
+          <label class="p-2">Contraseña <input type="password" placeholder="123456" class="w-full border p-2 rounded"></label>
+          <div class="py-2">
+            <button class="bg-gray-800 text-white w-full px-6 py-2 rounded"> 
+              Ingresar
+            </button>
+          </div>
         </form>
-        <p class="text-center mt-4 text-sm">¿Aún no tenés una cuenta?</p>
-        <button class="bg-gray-800 text-white w-full px-6 py-2 rounded">REGISTRARME</button>
+        <p class="text-center mt-4 text-sm pb-2">¿Aún no tenés una cuenta?</p>
+        <div class="py-2">
+          <button class="bg-gray-800 text-white w-full px-6 py-2 rounded">Registrarme</button>
+        </div>
         <div class="flex justify-center gap-4 mt-4">
-          <button class="border flex-1 py-2 rounded">Google</button>
-          <button class="border flex-1 py-2 rounded">Facebook</button>
+          <button class="border flex-1 py-2 rounded">Ingresar con Google</button>
+          <button class="border flex-1 py-2 rounded">Ingresar con Facebook</button>
         </div>
       </div>
     </section>
@@ -136,20 +158,21 @@
     <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center px-4">
       <div class="flex space-x-4">
         <span>Follow us</span>
-        <a href="#" aria-label="Link a página de Facebook de Playapp"><img src="https://img.icons8.com/ios-filled/20/facebook.png"/ alt="Logo de Facebook"></a>
-        <a href="#" aria-label="Link a perfil de Instagram de Playapp"><img src="https://img.icons8.com/ios-filled/20/instagram-new.png" alt="Logo de Instagram"/></a>
-        <a href="#" aria-label="Link a perfil de red social X de Playapp"><img src="https://img.icons8.com/ios-filled/20/x.png" alt="Link de red social X"/></a>
-        <a href="#" aria-label="Link a canal de Youtube de Playapp"><img src="https://img.icons8.com/ios-filled/20/youtube-play.png" alt="Link de Youtube"/></a>
+        <a href="#" aria-label="Link a página de Facebook de Playapp"><img src="https://img.icons8.com/ios-filled/20/facebook.png" alt="Logo de Facebook"></a>
+        <a href="#" aria-label="Link a perfil de Instagram de Playapp"><img src="https://img.icons8.com/ios-filled/20/instagram-new.png" alt="Logo de Instagram"></a>
+        <a href="#" aria-label="Link a perfil de red social X de Playapp"><img src="https://img.icons8.com/ios-filled/20/x.png" alt="Link de red social X"></a>
+        <a href="#" aria-label="Link a canal de Youtube de Playapp"><img src="https://img.icons8.com/ios-filled/20/youtube-play.png" alt="Link de Youtube"></a>
       </div>
       <div class="mt-4 md:mt-0">
-        <label class="text-sm">Inscribite a nuestra Newsletter:</label>
-        <div class="flex mt-1">
-          <input type="email" placeholder="Tu mail" class="border px-2 py-1 rounded-l">
-          <button class="bg-gray-800 text-white px-3 rounded-r">SUSCRIBIRME</button>
-        </div>
+        <label class="text-sm">Inscribite a nuestra Newsletter:
+          <div class="flex mt-1">
+            <input type="email" placeholder="Tu mail" class="border px-2 py-1 rounded-l">
+            <button class="bg-gray-800 text-white px-3 rounded-r">SUSCRIBIRME</button>
+          </div>
+        </label>
       </div>
     </div>
-    <p class="text-center text-gray-400 text-xs mt-4">© 2025 Playapp. Todos los derechos reservados.</p>
+    <p class="text-center text-gray-800 text-xs mt-4">© 2025 Playapp. Todos los derechos reservados.</p>
   </footer>
 
 </body>
