@@ -4,15 +4,23 @@
 import Image from "next/image";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function Header() {
   const [open, setOpen] = useState(false);
 
+  const router = useRouter();
+
+  const goToRegister = () => {
+    router.push("/registrar");
+  };
+
   function scrollToLogin() {
-    const loginSection = document.getElementById('login-section');
+    const loginSection = document.getElementById("login-section");
     if (loginSection) {
-      loginSection.scrollIntoView({ behavior: 'smooth' });
-    }
+      loginSection.scrollIntoView({ behavior: "smooth" });
+    } else
+      router.push("/");
   }
 
   return (
@@ -48,10 +56,16 @@ export default function Header() {
           >
             Conocé más
           </a>
-          <button className="border px-6 py-2 rounded bg-white hover:text-gray-500" onClick={scrollToLogin}>
+          <button
+            className="border px-6 py-2 rounded bg-white hover:text-gray-500"
+            onClick={goToRegister}
+          >
             Registrame
           </button>
-          <button className="border px-6 py-2 rounded bg-white hover:text-gray-500" onClick={scrollToLogin}>
+          <button
+            className="border px-6 py-2 rounded bg-white hover:text-gray-500"
+            onClick={scrollToLogin}
+          >
             Logearme
           </button>
         </nav>
@@ -73,10 +87,16 @@ export default function Header() {
           >
             Conocé más
           </a>
-          <button className="w-full border px-4 py-2 rounded bg-white text-black text-gray-800 hover:bg-gray-100" onClick={scrollToLogin}>
+          <button
+            className="w-full border px-4 py-2 rounded bg-white text-black text-gray-800 hover:bg-gray-100"
+            onClick={scrollToLogin}
+          >
             Registrame
           </button>
-          <button className="w-full border px-4 py-2 rounded bg-white text-black text-gray-800 hover:bg-gray-100" onClick={scrollToLogin}>
+          <button
+            className="w-full border px-4 py-2 rounded bg-white text-black text-gray-800 hover:bg-gray-100"
+            onClick={scrollToLogin}
+          >
             Logearme
           </button>
         </nav>

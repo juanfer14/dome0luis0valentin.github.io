@@ -1,19 +1,21 @@
-'use client'
+// /src/components/home/LoginSection.tsx
 
-import { useRouter } from 'next/navigation'
-import Image from "next/image"
+"use client";
+
+import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 export default function LoginSection() {
-
-  const router = useRouter()
+  const router = useRouter();
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     // lógica de autenticación opcional aquí
-    router.push('/menu') // 👉 redirección a la página "search"
-  }
+    router.push("/menu"); // 👉 redirección a la página "search"
+  };
 
   return (
+    
     // Fondo gris para toda la sección
     <div className="bg-gray-100 py-12 flex justify-center">
       {/* Formulario con fondo blanco y sombra */}
@@ -21,10 +23,7 @@ export default function LoginSection() {
         <section id="login-section">
           <div id="log-section" className="px-4 py-6">
             <h2 className="text-center text-xl font-semibold mb-6">INGRESAR</h2>
-            <form
-              onSubmit={handleSubmit}
-              className="space-y-4"
-            >
+            <form onSubmit={handleSubmit} className="space-y-4">
               <label className="p-2 block">
                 Nombre de Usuario
                 <input
@@ -65,9 +64,14 @@ export default function LoginSection() {
               </div>
             </form>
 
-            <p className="text-center mt-4 text-sm pb-2">¿Aún no tenés una cuenta?</p>
+            <p className="text-center mt-4 text-sm pb-2">
+              ¿Aún no tenés una cuenta?
+            </p>
             <div className="py-2">
-              <button className="bg-gray-800 text-white w-full px-6 py-2 rounded">
+              <button
+                className="bg-gray-800 text-white w-full px-6 py-2 rounded"
+                onClick={() => router.push("/registrar")}
+              >
                 Registrarme
               </button>
             </div>
@@ -98,5 +102,5 @@ export default function LoginSection() {
         </section>
       </div>
     </div>
-  )
+  );
 }
