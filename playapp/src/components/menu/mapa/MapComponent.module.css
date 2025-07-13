@@ -1,0 +1,13 @@
+.transparentTooltip {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+  color: black !important;
+  font-weight: bold;
+  font-size: 1.1rem; /* tamaño un poco más grande */
+  text-shadow:
+    -1px -1px 0 white,
+    1px -1px 0 white,
+    -1px 1px 0 white,
+    1px 1px 0 white;
+}
