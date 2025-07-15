@@ -1,3 +1,5 @@
+// /src/data/users.ts
+
 export type User = {
   id: number,
   username: string,

@@ -1,8 +1,11 @@
-// /app/menu/page.tsx
-"use client";
-import dynamic from "next/dynamic";
-const MapComponent = dynamic(() => import("@/components/menu/mapa/MapComponent"), { ssr: false });
+// /src/app/menu/page.tsx
+
+import MapWrapper from "@/components/menu/mapa/MapWrapper";
+
+export const metadata = {
+  title: "Vista general | Playapp",
+};
 
 export default function MenuPage() {
-  return <MapComponent />;
+  return <MapWrapper />;
 }
