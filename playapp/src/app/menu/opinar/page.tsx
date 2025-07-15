@@ -2,14 +2,15 @@
 
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import ReCAPTCHA from "react-google-recaptcha";
-import { beachLocations, Beach } from "@/data/beaches";
+import { beachLocations, Beach, UserRating } from "@/data/beaches";
 
 import { useBeaches } from "@/app/context/BeachesContext";
 import { Rating } from "@/data/beaches";
 import { useRouter } from "next/navigation";
+import { useTheme } from "@/app/context/ThemeContext";
 
 const COLORS: Record<number, string> = {
   1: "bg-red-600",
@@ -28,6 +29,8 @@ const LABELS = [
 ];
 
 export default function OpinarPage() {
+  const { darkMode } = useTheme();
+
   const router = useRouter();
 
   const [values, setValues] = useState(
@@ -48,7 +51,36 @@ export default function OpinarPage() {
   const playaId = searchParams.get("playa") || "";
   const beach: Beach = beachLocations[Number(playaId) - 1];
 
-  const { addOpinion } = useBeaches();
+  const { beachRatings, addOpinion, editOpinion, deleteOpinion } = useBeaches();
+
+  const userId = 101; // ⚠️ reemplazar luego por sistema de login real
+  // Estado para saber si ya se envió la opinión
+  const [opinionEnviada, setOpinionEnviada] = useState(false);
+  const [currentOpinion, setCurrentOpinion] = useState<UserRating | null>(null);
+  const opinionesDeLaPlaya = beachRatings[Number(playaId)] ?? [];
+  const opinionExistente = opinionesDeLaPlaya.find(
+    (op) => op.userId === userId
+  );
+
+  useEffect(() => {
+    setOpinionEnviada(false);
+  }, [playaId]);
+
+  useEffect(() => {
+    if (opinionExistente) {
+      const nuevaOpinion = opinionExistente.rating;
+      setValues({
+        "Calidad de Arena": nuevaOpinion.arena,
+        "Calidad del Agua": nuevaOpinion.agua,
+        Concurrencia: nuevaOpinion.concurrencia,
+        Limpieza: nuevaOpinion.limpieza,
+        Tranquilidad: nuevaOpinion.tranquilidad,
+        Atracciones: nuevaOpinion.atracciones,
+      });
+      setOpinion(opinionExistente.comentario);
+      setCurrentOpinion(opinionExistente); // <--- guardar opinión
+    }
+  }, [opinionExistente]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -57,39 +89,6 @@ export default function OpinarPage() {
       return;
     }
 
-    
-  };
-
-  // Estado para saber si ya se envió la opinión
-  const [opinionEnviada, setOpinionEnviada] = useState(false);
-
-  // Aquí guardarías el id o datos de la opinión para editar o eliminar
-  const opinionId = 123; // ejemplo, cambia según tu lógica real
-
-  const opinionLista = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Aquí lógica de envío de opinión (fetch, axios, etc)
-    // Si éxito:
-    if (!captchaValue) {
-      alert("Por favor, completa el captcha");
-      return;
-    }
-    setOpinionEnviada(true);
-  };
-
-  const eliminarOpinion = () => {
-    // Lógica para eliminar opinión por id (opinionId)
-    alert("Opinión eliminada");
-    router.push("/mapa"); // Volver al mapa tras eliminar
-  };
-
-  const editarOpinion = () => {
-    // Ir a página de edición o mostrar formulario con datos
-    alert("Editar opinión");
-    setOpinionEnviada(false); // o redirigir a otra página
-  };
-
-  const volverAlMapa = () => {
     const newRating: Rating = {
       arena: values["Calidad de Arena"],
       agua: values["Calidad del Agua"],
@@ -99,34 +98,81 @@ export default function OpinarPage() {
       atracciones: values["Atracciones"],
     };
 
+    const fecha = new Date().toISOString().split("T")[0];
     const beachId = Number(playaId);
 
-    addOpinion(beachId, newRating); // <-- 💥 actualiza el contexto
+    const opinionExistente = opinionesDeLaPlaya.find(
+      (op) => op.userId === userId && op.fecha === fecha
+    );
 
-    alert("Opinión enviada. ¡Gracias!");
+    if (opinionExistente) {
+      const updatedOpinion: UserRating = {
+        ...opinionExistente,
+        comentario: opinion,
+        rating: newRating,
+      };
+      editOpinion(beachId, updatedOpinion);
+      setCurrentOpinion(updatedOpinion); // <--- actualizar estado
+      alert("Opinión enviada. ¡Gracias!");
+    } else {
+      const nuevaOpinion: UserRating = {
+        id: Date.now(),
+        userId,
+        fecha,
+        comentario: opinion,
+        rating: newRating,
+      };
+      addOpinion(beachId, nuevaOpinion);
+      setCurrentOpinion(nuevaOpinion); // <--- guardar
+      alert("Opinión enviada. ¡Gracias!");
+    }
 
+    setOpinionEnviada(true);
+  };
+
+  const editarOpinion = () => setOpinionEnviada(false);
+
+  const eliminarOpinion = () => {
+    if (!currentOpinion) {
+      alert("No hay opinión para eliminar");
+      return;
+    }
+    const beachId = Number(playaId);
+    deleteOpinion(beachId, currentOpinion.id);
+    alert("Opinión eliminada");
+    router.push("/menu"); // o a donde quieras ir
+  };
+
+  const volverAlMapa = () => {
+    alert("Volviendo al mapa");
     router.push("/menu"); // 👈 volver al mapa automáticamente
-    router.push("/mapa");
   };
 
   return (
-    <div className="max-w-xl mx-auto p-4 font-sans text-black">
+    <div
+      className="max-w-xl mx-auto p-4 font-sans transition-colors duration-300"
+    >
       {/* Cabecera con nombre y botón de volver */}
-      {!opinionEnviada &&
-        (<>
+      {!opinionEnviada ? (
+        <>
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold">{beach.name}</h2>
+            <h2 className="text-2xl font-bold dark:text-gray-900">
+              {beach.name}
+            </h2>
             <button
               onClick={() => router.push("/menu")}
-              className="text-sm bg-gray-300 hover:bg-gray-400 text-black font-semibold py-1 px-3 rounded"
+              className={`text-md font-semibold py-1 px-3 rounded
+                ${ darkMode ? "bg-gray-600  hover:bg-gray-500" : "bg-gray-300 hover:bg-gray-400" }`}
             >
               Volver al mapa
             </button>
           </div>
 
-          <h3 className="text-xl font-semibold mb-6">Ingrese su opinión</h3>
+          <h3 className="text-xl font-semibold mb-6">
+            Ingrese su opinión
+          </h3>
 
-          <form onSubmit={opinionLista} className="space-y-8">
+          <form onSubmit={handleSubmit} className="space-y-8">
             {LABELS.map((label) => {
               const val = values[label];
               const colorClass = COLORS[val];
@@ -134,7 +180,9 @@ export default function OpinarPage() {
 
               return (
                 <div key={label} className="space-y-2 w-full">
-                  <label className="block font-semibold">{label}</label>
+                  <label className="block font-semibold">
+                    {label}
+                  </label>
 
                   {/* Emoji alineados con el slider */}
                   <div className="relative h-8 select-none mb-1">
@@ -232,7 +280,10 @@ export default function OpinarPage() {
             })}
 
             <div>
-              <label htmlFor="opinion" className="block font-semibold mb-1">
+              <label
+                htmlFor="opinion"
+                className="block font-semibold mb-1 dark:text-white"
+              >
                 Comentarios
               </label>
               <textarea
@@ -253,50 +304,89 @@ export default function OpinarPage() {
               />
             </div>
 
-            <button
-              type="submit"
-              className="w-full bg-gray-900 hover:bg-purple-950 text-white font-bold py-3 rounded transition"
-            >
-              Publicar
-            </button>
+            {opinionExistente ? (
+              <>
+                <div className="mb-4 text-sm">
+                  Enviada el:{" "}
+                  <span className="font-semibold">
+                    {new Date(opinionExistente.fecha).toLocaleDateString(
+                      "es-AR",
+                      {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      }
+                    )}
+                  </span>
+                </div>
+
+                <div className="flex gap-4">
+                  <button
+                    type="button"
+                    onClick={eliminarOpinion}
+                    className="flex-1 bg-red-600 text-white py-2 rounded hover:bg-red-700"
+                  >
+                    Eliminar <br /> Opinión
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleSubmit}
+                    className={`flex-1 py-2 rounded  
+                      ${ darkMode ? "bg-gray-600  hover:bg-gray-500" : "bg-gray-300 hover:bg-gray-400" }`}
+                  >
+                    Editar <br /> Opinión
+                  </button>
+                </div>
+              </>
+            ) : (
+              <button
+                type="submit"
+                className={`w-full font-bold py-3 rounded transition
+                  ${ darkMode ? "bg-gray-600  hover:bg-gray-500" : "bg-gray-300 hover:bg-gray-400" }`}
+              >
+                Publicar
+              </button>
+            )}
           </form>
         </>
-        )} : (
-          <div>
-            <div className="mb-6">
-              {/* Icono */}
-              <div className="mx-auto mb-4 w-12 h-12 rounded-full bg-gray-900 flex items-center justify-center">
-                <span className="text-white text-3xl font-bold">✓</span>
-              </div>
-              <h2 className="text-2xl font-bold mb-2">
-                Gracias por tu opinión
-              </h2>
-              <p className="text-gray-600 mb-8">Opinión Publicada</p>
+      ) : (
+        <div>
+          <div className="mb-6">
+            {/* Icono */}
+            <div className={`mx-auto mb-4 w-12 h-12 rounded-full flex items-center justify-center ${ darkMode ? "bg-gray-100" : "bg-gray-900" } `}>
+              <span className={` text-3xl font-bold ${ darkMode ? "text-black" : "text-white"}`}>✓</span>
             </div>
+            <h2 className="text-2xl font-bold mb-2">Gracias por tu opinión</h2>
+            <p className={`${ darkMode ? "text-gray-300" : "text-gray-600"  } `}>
+              Opinión Publicada
+            </p>
+          </div>
 
-            <div className="flex gap-4 mb-6">
-              <button
-                onClick={eliminarOpinion}
-                className="flex-1 bg-red-600 text-white py-2 rounded hover:bg-red-700"
-              >
-                Eliminar <br /> Opinión
-              </button>
-              <button
-                onClick={editarOpinion}
-                className="flex-1 bg-gray-800 text-white py-2 rounded hover:bg-gray-900"
-              >
-                Editar <br /> Opinión
-              </button>
-            </div>
-
+          <div className="flex gap-4 mb-6">
             <button
-              onClick={volverAlMapa}
-              className="w-full bg-gray-900 text-white py-3 rounded hover:bg-gray-800"
+              onClick={eliminarOpinion}
+              className="flex-1  py-2 rounded bg-red-600 hover:bg-red-700 text-white"
             >
-              Volver al Mapa
+              Eliminar <br /> Opinión
+            </button>
+            <button
+              onClick={editarOpinion}
+              className={`flex-1 py-2 rounded  
+                ${ darkMode ? "bg-gray-600  hover:bg-gray-500" : "bg-gray-300 hover:bg-gray-400" }`}
+            >
+              Editar <br /> Opinión
             </button>
           </div>
-        )
+
+          <button
+            onClick={volverAlMapa}
+            className={`w-full py-3 rounded 
+              ${ darkMode ? "bg-gray-600  hover:bg-gray-500" : "bg-gray-300 hover:bg-gray-400"} `}          
+            >
+            Volver al Mapa
+          </button>
+        </div>
+      )}
     </div>
   );
 }

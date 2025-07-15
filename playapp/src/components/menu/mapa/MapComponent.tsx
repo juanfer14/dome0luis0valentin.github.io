@@ -22,18 +22,16 @@ import { useBeaches } from "@/app/context/BeachesContext";
 
 import { useRef } from "react";
 
-import {
-  IconLevel,
-  beachLevelIconUrls,
-  faceIcons,
-} from "@/data/beaches";
+import { useTheme } from "@/app/context/ThemeContext"; // ✅
+
+import { IconLevel, beachLevelIconUrls, faceIcons } from "@/data/beaches";
 import { useState } from "react";
 
 const getScoreLevel = (score: number): number => {
   if (score >= 7) return 1; // Nivel alto (verde)
   if (score >= 5) return 2; // Nivel medio-alto (amarillo)
   if (score >= 3) return 3; // Nivel medio (naranja)
-                  return 4; // Nivel bajo (rojo)
+  return 4; // Nivel bajo (rojo)
 };
 
 const getColor: Record<number, string> = {
@@ -54,7 +52,7 @@ const getIcon: Record<number, IconLevel> = {
   1: "nivel1",
   2: "nivel2",
   3: "nivel3",
-  4: "nivel4"
+  4: "nivel4",
 };
 
 const createIcon = (url: string) =>
@@ -66,6 +64,7 @@ const createIcon = (url: string) =>
   });
 
 export default function MapComponent() {
+  const { darkMode } = useTheme();
   // Estado para seleccionar una playa
   const [selectedBeach, setSelectedBeach] = useState<number | null>(null);
   const [mapCenter, setMapCenter] = useState<[number, number]>([
@@ -132,16 +131,20 @@ export default function MapComponent() {
                     textAlign: "center",
                     fontFamily: "sans-serif",
                     padding: "0.5rem",
+                    backgroundColor: darkMode ? "#1f2937" : "#ffffff", // dark: gray-800
+                    color: darkMode ? "#f3f4f6" : "#111827", // dark: gray-100
+                    borderRadius: "8px",
+                    boxShadow: "0 4px 8px rgba(0,0,0,0.2)",
                   }}
                 >
                   <div
                     style={{
                       backgroundColor:
-                        getColor[getScoreLevel(scores?.finalScore ?? 1)], // 🔁 color dinámico
+                        getColor[getScoreLevel(scores?.finalScore ?? 1)],
                       color:
                         getScoreLevel(scores?.finalScore ?? 1) < 3
                           ? "#000"
-                          : "#fff", // ✅ Negro solo en verde y amarillo
+                          : "#fff",
                       padding: "0.25rem 0.5rem",
                       borderRadius: "5px",
                       fontWeight: "bold",
@@ -151,10 +154,11 @@ export default function MapComponent() {
                   >
                     {name}
                   </div>
+
                   <div
                     style={{
-                      backgroundColor: "#f0f0f0",
-                      border: "1px solid #ccc",
+                      backgroundColor: darkMode ? "#374151" : "#f0f0f0", // dark: gray-700
+                      border: `1px solid ${darkMode ? "#4b5563" : "#ccc"}`, // gray-600
                       padding: "0.75rem",
                       borderRadius: "5px",
                     }}
@@ -168,9 +172,13 @@ export default function MapComponent() {
                     <button
                       onClick={() => {
                         handleShowStats(index);
-                        markerRefs.current[index]?.closePopup(); // ✅ cerrar el popup
+                        markerRefs.current[index]?.closePopup();
                       }}
-                      className="mt-3 w-full bg-blue-900 hover:bg-blue-950 text-white font-semibold py-2 px-4 rounded-md shadow transition-colors duration-200"
+                      className={`mt-3 w-full font-semibold py-2 px-4 rounded-md shadow transition-colors duration-200 ${
+                        darkMode
+                          ? "bg-white text-gray-900 hover:bg-gray-200"
+                          : "bg-black text-white hover:bg-gray-800"
+                      }`}
                     >
                       Ver estadísticas
                     </button>

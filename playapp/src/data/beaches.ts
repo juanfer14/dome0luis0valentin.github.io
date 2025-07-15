@@ -1,3 +1,4 @@
+
 // src/data/beaches.ts
 export const beachLevelIconUrls = {
   nivel1: '/images/1.png',
@@ -35,6 +36,7 @@ export type Rating = {
 };
 
 export type UserRating = {
+  id: number,
   userId: number,
   fecha: string,
   comentario: string
@@ -78,18 +80,21 @@ export const beachLocations: Beach[] = [
 export const beachRatings: Record<number, UserRating[]> = {
   1: [
     {
+      id: 1,
       userId: 1,
       fecha: "2025-07-01",
       comentario: "Arena muy limpia y buena vista, pero faltan atracciones.",
       rating: { arena: 4, agua: 3, concurrencia: 2, limpieza: 4, tranquilidad: 3, atracciones: 2 }
     },
     {
+      id: 2,
       userId: 2,
       fecha: "2025-07-03",
       comentario: "Poca gente, ideal para descansar. El agua podría estar mejor.",
       rating: { arena: 3, agua: 2, concurrencia: 2, limpieza: 4, tranquilidad: 3, atracciones: 3 }
     },
     {
+      id: 3,
       userId: 3,
       fecha: "2025-07-08",
       comentario: "Muy tranquila. Me encantó caminar por la orilla.",
@@ -98,18 +103,21 @@ export const beachRatings: Record<number, UserRating[]> = {
   ],
   2: [
     {
+      id: 4,
       userId: 4,
       fecha: "2025-06-28",
       comentario: "Demasiada gente para mi gusto. El agua estaba bien.",
       rating: { arena: 2, agua: 3, concurrencia: 4, limpieza: 3, tranquilidad: 2, atracciones: 1 }
     },
     {
+      id: 5,
       userId: 5,
       fecha: "2025-07-04",
       comentario: "No es la mejor playa, pero tiene buen acceso.",
       rating: { arena: 2, agua: 3, concurrencia: 4, limpieza: 3, tranquilidad: 2, atracciones: 2 }
     },
     {
+      id: 6,
       userId: 6,
       fecha: "2025-07-11",
       comentario: "Ideal para grupos grandes. Arena aceptable.",
@@ -118,18 +126,21 @@ export const beachRatings: Record<number, UserRating[]> = {
   ],
   3: [
     {
+      id: 7,
       userId: 7,
       fecha: "2025-07-02",
       comentario: "Una playa promedio, pero cómoda para pasar el día.",
       rating: { arena: 3, agua: 3, concurrencia: 3, limpieza: 3, tranquilidad: 3, atracciones: 3 }
     },
     {
+      id: 8,
       userId: 1,
       fecha: "2025-07-05",
       comentario: "Me gustó la tranquilidad. El agua estaba bastante bien.",
       rating: { arena: 3, agua: 4, concurrencia: 2, limpieza: 3, tranquilidad: 4, atracciones: 3 }
     },
     {
+      id: 9,
       userId: 8,
       fecha: "2025-07-09",
       comentario: "Limpia y con algunas cosas divertidas para hacer. Volvería.",
@@ -138,18 +149,21 @@ export const beachRatings: Record<number, UserRating[]> = {
   ],
   4: [
     {
+      id: 11,
       userId: 2,
       fecha: "2025-07-01",
       comentario: "Muy básica. No volvería salvo que mejore mucho.",
       rating: { arena: 1, agua: 2, concurrencia: 3, limpieza: 2, tranquilidad: 1, atracciones: 2 }
     },
     {
+      id: 12,
       userId: 4,
       fecha: "2025-07-06",
       comentario: "Al menos estaba limpia, pero todo lo demás muy pobre.",
       rating: { arena: 2, agua: 2, concurrencia: 2, limpieza: 3, tranquilidad: 2, atracciones: 1 }
     },
     {
+      id: 13,
       userId: 6,
       fecha: "2025-07-10",
       comentario: "No la recomiendo. Hay opciones mejores cerca.",
@@ -158,18 +172,21 @@ export const beachRatings: Record<number, UserRating[]> = {
   ],
   5: [
     {
+      id: 14,
       userId: 3,
       fecha: "2025-07-02",
       comentario: "Excelente opción, todo en balance. Muy recomendable.",
       rating: { arena: 4, agua: 4, concurrencia: 3, limpieza: 4, tranquilidad: 4, atracciones: 3 }
     },
     {
+      id: 15,
       userId: 5,
       fecha: "2025-07-06",
       comentario: "Linda playa aunque algo concurrida. Buenas actividades.",
       rating: { arena: 3, agua: 4, concurrencia: 4, limpieza: 4, tranquilidad: 3, atracciones: 4 }
     },
     {
+      id: 16,
       userId: 7,
       fecha: "2025-07-12",
       comentario: "Muy completa, aunque un poco llena los fines de semana.",
@@ -178,18 +195,21 @@ export const beachRatings: Record<number, UserRating[]> = {
   ],
   6: [
     {
+      id: 17,
       userId: 8,
       fecha: "2025-07-01",
       comentario: "No es para todos, pero si buscás algo muy tranquilo, sirve.",
       rating: { arena: 2, agua: 2, concurrencia: 1, limpieza: 1, tranquilidad: 2, atracciones: 1 }
     },
     {
+      id: 18,
       userId: 1,
       fecha: "2025-07-05",
       comentario: "Un poco descuidada. No la pasé bien.",
       rating: { arena: 1, agua: 2, concurrencia: 2, limpieza: 1, tranquilidad: 1, atracciones: 1 }
     },
     {
+      id: 19,
       userId: 4,
       fecha: "2025-07-07",
       comentario: "Aceptable si no tenés muchas expectativas. Faltan servicios.",
@@ -213,7 +233,7 @@ function scaleToTen(value: number): number {
   return +(1 + (value - 1) * 3).toFixed(2);
 }
 
-export function calculateAggregatedScoresWithFinalTen(ratings: UserRating[] | undefined): BeachScores | null {
+export function calculateAggregatedScoresWithFinalTen(ratings: Rating[] | undefined): BeachScores | null {
   if (!ratings || ratings.length === 0) return null;
 
   const items: (keyof Rating)[] = ['arena', 'agua', 'concurrencia', 'limpieza', 'tranquilidad', 'atracciones'];
@@ -221,14 +241,14 @@ export function calculateAggregatedScoresWithFinalTen(ratings: UserRating[] | un
 
   // Calcular promedio por ítem (redondeado)
   items.forEach(item => {
-    const sum = ratings.reduce((acc, r) => acc + r.rating[item], 0);
+    const sum = ratings.reduce((acc, r) => acc + r[item], 0);
     const avg = sum / ratings.length;
     aggregated[item] = roundScore(avg); // redondeamos a 1-4
   });
 
   // Calcular finalScore (decimal de 1 a 10)
   const avgRaw = items.reduce((acc, item) => {
-    const sum = ratings.reduce((a, r) => a + r.rating[item], 0);
+    const sum = ratings.reduce((a, r) => a + r[item], 0);
     return acc + (sum / ratings.length);
   }, 0) / items.length;
 
@@ -242,8 +262,10 @@ export function calculateAggregatedScoresWithFinalTen(ratings: UserRating[] | un
 // Generar arreglo final con puntajes
 
 export const beachesWithScores: BeachWithScores[] = beachLocations.map(beach => {
-  const ratings = beachRatings[beach.id];
+  const beachRating = beachRatings[beach.id] ?? [];
+  const ratings = beachRating.map(r => r.rating); // <- 💡 Extraés solo la parte `rating`
   const scores = calculateAggregatedScoresWithFinalTen(ratings);
+
   return { ...beach, scores };
 });
 

@@ -1,8 +1,11 @@
 'use client'
 
 import { useState } from 'react'
+import { useTheme } from '@/app/context/ThemeContext' // ✅ Importar contexto
 
 export default function DropdownFilter() {
+  const { darkMode } = useTheme() // ✅ Obtener darkMode del context
+
   const options = [
     '🏖️ CONTAMINACIÓN EN LA ARENA',
     '🌊 CONTAMINACIÓN DEL AGUA',
@@ -29,24 +32,32 @@ export default function DropdownFilter() {
       {/* Botón principal */}
       <button
         onClick={() => setIsOpen((prev) => !prev)}
-        className="w-full bg-black bg-opacity-80 text-white px-4 py-2 rounded-lg flex items-center justify-between hover:bg-opacity-90"
+        className={`w-full px-4 py-2 rounded-lg flex items-center justify-between transition
+          ${darkMode
+            ? 'bg-black bg-opacity-80 text-white hover:bg-opacity-90'
+            : 'bg-gray-200 text-black hover:bg-gray-300'}`}
       >
         ⚙️ PUNTUAR POR
         <span className="ml-2">{isOpen ? '▲' : '▼'}</span>
       </button>
 
-      {/* Opciones (si está abierto) */}
+      {/* Opciones */}
       {isOpen && (
-        <div className="mt-2 w-full bg-black bg-opacity-80 text-white rounded-lg p-2 space-y-1">
+        <div className={`mt-2 w-full rounded-lg p-2 space-y-1 transition
+          ${darkMode ? 'bg-black bg-opacity-80 text-white' : 'bg-white text-black shadow-md'}`}>
           {options.map((label, i) => {
             const isSelected = selectedOptions.includes(i)
             return (
               <button
                 key={i}
                 onClick={() => toggleOption(i)}
-                className={`w-full flex items-center justify-between gap-2 px-3 py-2 rounded ${
-                  isSelected ? 'bg-gray-900' : 'bg-transparent'
-                } hover:bg-gray-800`}
+                className={`w-full flex items-center justify-between gap-2 px-3 py-2 rounded transition
+                  ${isSelected
+                    ? darkMode
+                      ? 'bg-gray-900'
+                      : 'bg-gray-300'
+                    : 'bg-transparent'}
+                  ${darkMode ? 'hover:bg-gray-800' : 'hover:bg-gray-200'}`}
               >
                 <span>{label}</span>
                 {isSelected && <span>✓</span>}

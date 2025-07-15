@@ -1,18 +1,18 @@
 // /src/app/page.tsx
 
-import Header from '@/components/home/Header'
-import Hero from '@/components/home/Hero'
-import TopBeaches from '@/components/home/TopBeaches'
-import Testimonials from '@/components/home/Testimonials'
-import Features from '@/components/home/Features'
-import LoginSection from '@/components/home/LoginSection'
-import Footer from '@/components/home/Footer'
+import Header from "@/components/home/Header";
+import Hero from "@/components/home/Hero";
+import TopBeaches from "@/components/home/TopBeaches";
+import Testimonials from "@/components/home/Testimonials";
+import Features from "@/components/home/Features";
+import LoginSection from "@/components/home/LoginSection";
+import Footer from "@/components/home/Footer";
 
 export const metadata = {
   title: "Inicio | Playapp",
 };
 
-import Head from 'next/head'
+import Head from "next/head";
 
 export default function Home() {
   return (
@@ -28,5 +28,5 @@ export default function Home() {
       <LoginSection />
       <Footer />
     </>
-  )
+  );
 }

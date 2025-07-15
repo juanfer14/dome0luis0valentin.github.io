@@ -1,7 +1,7 @@
 // /components/menu/ClientLayout.tsx
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SidebarContext } from "@/context/SidebarContext";
 import Sidebar from "@/components/menu/layout/Sidebar";
 import Topbar from "@/components/menu/layout/Topbar";
@@ -15,6 +15,12 @@ export default function ClientLayout({
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const pathname = usePathname();
 
   const getActiveSection = () => {
@@ -26,25 +32,28 @@ export default function ClientLayout({
     return "";
   };
 
+  if (!mounted) return null;
+
   return (
     <SidebarContext.Provider value={{ sidebarOpen }}>
-      <Sidebar
-        isOpen={sidebarOpen}
-        onClose={() => setSidebarOpen(false)}
-        active={getActiveSection()}
-      />
-      <div className="flex-1 flex flex-col relative z-0 h-full">
-        <Topbar
-          onToggleSidebar={() => setSidebarOpen((prev) => !prev)}
-          onToggleSearch={() => setSearchOpen(true)}
+      <div className="flex h-screen w-full">
+        <Sidebar
+          isOpen={sidebarOpen}
+          onClose={() => setSidebarOpen(false)}
+          active={getActiveSection()}
         />
-        <div className="flex-1 min-h-0 relative w-full overflow-y-auto">
-          {children}
+        <div className="flex-1 flex flex-col relative z-0 h-full">
+          <Topbar
+            onToggleSidebar={() => setSidebarOpen((prev) => !prev)}
+            onToggleSearch={() => setSearchOpen(true)}
+          />
+          <div className="flex-1 min-h-0 relative w-full overflow-y-auto">
+            {children}
+          </div>
+          {searchOpen && (
+            <MobileSearchModal onClose={() => setSearchOpen(false)} />
+          )}
         </div>
-
-        {searchOpen && (
-          <MobileSearchModal onClose={() => setSearchOpen(false)} />
-        )}
       </div>
     </SidebarContext.Provider>
   );
