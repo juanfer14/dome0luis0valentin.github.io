@@ -10,8 +10,6 @@ import { Rating } from "@/data/beaches";
 import { useRouter } from "next/navigation";
 import { useTheme } from "@/app/context/ThemeContext";
 
-
-
 const COLORS: Record<number, string> = {
   1: "bg-red-600",
   2: "bg-orange-500",
@@ -54,6 +52,9 @@ export default function OpinarClient() {
   const { beachRatings, addOpinion, editOpinion, deleteOpinion } = useBeaches();
 
   const userId = 101; // ⚠️ reemplazar luego por sistema de login real
+  const [captchaError, setCaptchaError] = useState(false);
+  const [opinionEliminada, setOpinionEliminada] = useState(false);
+
   // Estado para saber si ya se envió la opinión
   const [opinionEnviada, setOpinionEnviada] = useState(false);
   const [currentOpinion, setCurrentOpinion] = useState<UserRating | null>(null);
@@ -84,10 +85,13 @@ export default function OpinarClient() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    e.preventDefault();
+
     if (!captchaValue) {
-      alert("Por favor, completa el captcha");
+      setCaptchaError(true);
       return;
     }
+    setCaptchaError(false);
 
     const newRating: Rating = {
       arena: values["Calidad de Arena"],
@@ -113,7 +117,6 @@ export default function OpinarClient() {
       };
       editOpinion(beachId, updatedOpinion);
       setCurrentOpinion(updatedOpinion); // <--- actualizar estado
-      alert("Opinión enviada. ¡Gracias!");
     } else {
       const nuevaOpinion: UserRating = {
         id: Date.now(),
@@ -124,13 +127,14 @@ export default function OpinarClient() {
       };
       addOpinion(beachId, nuevaOpinion);
       setCurrentOpinion(nuevaOpinion); // <--- guardar
-      alert("Opinión enviada. ¡Gracias!");
     }
-
     setOpinionEnviada(true);
   };
 
-  const editarOpinion = () => setOpinionEnviada(false);
+  const editarOpinion = () => {
+    setCaptchaValue(null);
+    setOpinionEnviada(false);
+  };
 
   const eliminarOpinion = () => {
     if (!currentOpinion) {
@@ -139,36 +143,44 @@ export default function OpinarClient() {
     }
     const beachId = Number(playaId);
     deleteOpinion(beachId, currentOpinion.id);
-    alert("Opinión eliminada");
-    router.push("/menu"); // o a donde quieras ir
+    setOpinionEliminada(true);
   };
 
   const volverAlMapa = () => {
-    alert("Volviendo al mapa");
     router.push("/menu"); // 👈 volver al mapa automáticamente
   };
 
   return (
-    <div
-      className="max-w-xl mx-auto p-4 font-sans transition-colors duration-300"
-    >
+    <div className="max-w-xl mx-auto p-4 font-sans transition-colors duration-300">
       {/* Cabecera con nombre y botón de volver */}
-      {!opinionEnviada ? (
+      {!opinionEnviada && !opinionEliminada ? (
         <>
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold dark:text-gray-900">
+            <h2
+              className={`text-3xl font-bold ${
+                darkMode ? "text-white" : "text-black"
+              }`}
+            >
               {beach.name}
             </h2>
             <button
               onClick={() => router.push("/menu")}
               className={`text-md font-semibold py-1 px-3 rounded
-                ${ darkMode ? "bg-gray-600  hover:bg-gray-500" : "bg-gray-300 hover:bg-gray-400" }`}
+                ${
+                  darkMode
+                    ? "bg-gray-600  hover:bg-gray-700"
+                    : "bg-gray-300 hover:bg-gray-400"
+                }`}
             >
               Volver al mapa
             </button>
           </div>
 
-          <h3 className="text-xl font-semibold mb-6">
+          <h3
+            className={`text-xl font-semibold mb-6 ${
+              darkMode ? "text-gray-100" : "text-gray-900"
+            }`}
+          >
             Ingrese su opinión
           </h3>
 
@@ -180,9 +192,7 @@ export default function OpinarClient() {
 
               return (
                 <div key={label} className="space-y-2 w-full">
-                  <label className="block font-semibold">
-                    {label}
-                  </label>
+                  <label className="block font-normal">{label}</label>
 
                   {/* Emoji alineados con el slider */}
                   <div className="relative h-8 select-none mb-1">
@@ -282,7 +292,9 @@ export default function OpinarClient() {
             <div>
               <label
                 htmlFor="opinion"
-                className="block font-semibold mb-1 dark:text-white"
+                className={`block font-semibold mb-1 ${
+                  darkMode ? "text-white" : "text-black"
+                }`}
               >
                 Comentarios
               </label>
@@ -297,11 +309,19 @@ export default function OpinarClient() {
               />
             </div>
 
-            <div>
-              <ReCAPTCHA
-                sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI" // sitekey de test para desarrollo local
-                onChange={(value) => setCaptchaValue(value)}
-              />
+            <div className="w-full flex flex-col items-center">
+              <div className="transform origin-top scale-100 sm:scale-100 md:scale-100 lg:scale-100 w-max">
+                <ReCAPTCHA
+                  sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
+                  onChange={(value) => setCaptchaValue(value)}
+                />
+              </div>
+
+              {captchaError && (
+                <p className={`${darkMode ? "text-yellow-400" : "text-red-500"} font-bold text-sm mt-2 text-center`}>
+                  Por favor, completá el captcha.
+                </p>
+              )}
             </div>
 
             {opinionExistente ? (
@@ -330,11 +350,23 @@ export default function OpinarClient() {
                   </button>
                   <button
                     type="button"
-                    onClick={handleSubmit}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      if (!captchaValue) {
+                        setCaptchaError(true);
+                        return;
+                      }
+                      setCaptchaError(false);
+                      handleSubmit(e);
+                    }}
                     className={`flex-1 py-2 rounded  
-                      ${ darkMode ? "bg-gray-600  hover:bg-gray-500" : "bg-gray-300 hover:bg-gray-400" }`}
+                      ${
+                        darkMode
+                          ? "bg-gray-600  hover:bg-gray-700 text-white"
+                          : "bg-black hover:bg-gray-700 text-white"
+                      }`}
                   >
-                    Editar <br /> Opinión
+                    Aceptar <br />
                   </button>
                 </div>
               </>
@@ -342,22 +374,85 @@ export default function OpinarClient() {
               <button
                 type="submit"
                 className={`w-full font-bold py-3 rounded transition
-                  ${ darkMode ? "bg-gray-600  hover:bg-gray-500" : "bg-gray-300 hover:bg-gray-400" }`}
+                  ${
+                    darkMode
+                      ? "bg-gray-100  hover:bg-gray-300 text-black"
+                      : "bg-black hover:bg-gray-700 text-white"
+                  }`}
               >
                 Publicar
               </button>
             )}
           </form>
         </>
+      ) : opinionEliminada ? (
+        <div className="text-center">
+          <div
+            className={`mx-auto mb-4 w-24 h-24 rounded-full flex items-center justify-center ${
+              darkMode ? "bg-gray-100" : "bg-gray-900"
+            }`}
+          >
+            <span
+              className={`text-3xl font-bold ${
+                darkMode ? "text-black" : "text-white"
+              }`}
+            >
+              🗑️
+            </span>
+          </div>
+          <h2 className="text-2xl font-bold mb-2">Opinión eliminada</h2>
+          <p className={`${darkMode ? "text-gray-300" : "text-gray-600"} mb-6`}>
+            Tu opinión fue eliminada correctamente.
+          </p>
+          <div className="flex gap-4 mb-4">
+            <button
+              onClick={() => {
+                setOpinion("");
+                setOpinionEliminada(false);
+                setOpinionEnviada(false);
+                setCaptchaValue(null);
+              }}
+              className={`flex-1 py-2 rounded  
+          ${
+            darkMode
+              ? "bg-gray-600 hover:bg-gray-700 text-white"
+              : "bg-black hover:bg-gray-700 text-white"
+          }`}
+            >
+              Publicar nueva opinión
+            </button>
+            <button
+              onClick={volverAlMapa}
+              className={`flex-1 py-2 rounded 
+          ${
+            darkMode
+              ? "bg-gray-200 hover:bg-gray-300 text-black"
+              : "bg-gray-300 hover:bg-gray-400 text-black"
+          }`}
+            >
+              Volver al mapa
+            </button>
+          </div>
+        </div>
       ) : (
         <div>
           <div className="mb-6">
             {/* Icono */}
-            <div className={`mx-auto mb-4 w-12 h-12 rounded-full flex items-center justify-center ${ darkMode ? "bg-gray-100" : "bg-gray-900" } `}>
-              <span className={` text-3xl font-bold ${ darkMode ? "text-black" : "text-white"}`}>✓</span>
+            <div
+              className={`mx-auto mb-4 w-24 h-24 rounded-full flex items-center justify-center ${
+                darkMode ? "bg-gray-100" : "bg-gray-900"
+              } `}
+            >
+              <span
+                className={` text-3xl font-bold ${
+                  darkMode ? "text-black" : "text-white"
+                }`}
+              >
+                ✓
+              </span>
             </div>
             <h2 className="text-2xl font-bold mb-2">Gracias por tu opinión</h2>
-            <p className={`${ darkMode ? "text-gray-300" : "text-gray-600"  } `}>
+            <p className={`${darkMode ? "text-gray-300" : "text-gray-600"} `}>
               Opinión Publicada
             </p>
           </div>
@@ -372,7 +467,11 @@ export default function OpinarClient() {
             <button
               onClick={editarOpinion}
               className={`flex-1 py-2 rounded  
-                ${ darkMode ? "bg-gray-600  hover:bg-gray-500" : "bg-gray-300 hover:bg-gray-400" }`}
+                ${
+                  darkMode
+                    ? "bg-gray-600  hover:bg-gray-700 text-white"
+                    : "bg-black hover:bg-gray-700 text-white"
+                }`}
             >
               Editar <br /> Opinión
             </button>
@@ -381,8 +480,12 @@ export default function OpinarClient() {
           <button
             onClick={volverAlMapa}
             className={`w-full py-3 rounded 
-              ${ darkMode ? "bg-gray-600  hover:bg-gray-500" : "bg-gray-300 hover:bg-gray-400"} `}          
-            >
+              ${
+                darkMode
+                  ? "bg-gray-100  hover:bg-gray-300 text-black"
+                  : "bg-black hover:bg-gray-700 text-white"
+              } `}
+          >
             Volver al Mapa
           </button>
         </div>

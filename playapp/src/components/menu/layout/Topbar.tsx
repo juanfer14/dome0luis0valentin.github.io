@@ -21,13 +21,13 @@ export default function Topbar({
     >
       <button
         id="menuToggle"
-        className="md:hidden text-2xl mr-4 dark:text-white"
+        className={`md:hidden text-2xl mr-4 ${darkMode ? "text-white" : "text-black"}`}
         onClick={onToggleSidebar} // <--- IMPORTANTE
         aria-label="Toggle menu"
       >
         ☰
       </button>
-      <h1 className="text-xl font-semibold hidden md:block dark:text-white">
+      <h1 className={`text-xl font-semibold hidden md:block ${darkMode ? "text-white" : "text-black"}`}>
         Bienvenido John
       </h1>
       <div className="flex items-center gap-3 overflow-hidden flex-shrink-0 ">
@@ -52,7 +52,7 @@ export default function Topbar({
         </button>
         <span className="relative flex-shrink-0">
           🔔
-          <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-1.5 py-0.5 rounded-full dark:text-white">
+          <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-1.5 py-0.5 rounded-full text-white">
             4
           </span>
         </span>
@@ -64,7 +64,7 @@ export default function Topbar({
             alt="User"
             className="rounded-full"
           />
-          <span className="text-sm dark:text-white">John Doe</span>
+          <span className={`text-sm ${darkMode ? "text-white" : "text-black"} `}>John Doe</span>
         </div>
       </div>
     </header>

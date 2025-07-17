@@ -6,7 +6,7 @@ import { BeachWithScores, Rating } from "@/data/beaches";
 import Image from "next/image";
 import { beachLevelScoreUrls } from "@/data/beaches";
 import { useBeaches } from "@/app/context/BeachesContext";
-import { useTheme } from "@/app/context/ThemeContext"; // ✅ Importar darkMode
+import { useTheme } from "@/app/context/ThemeContext";
 import { users } from "@/data/users";
 
 interface BeachStatsPanelProps {
@@ -20,16 +20,14 @@ export default function BeachStatsPanel({
 }: BeachStatsPanelProps) {
   const [activeTab, setActiveTab] = useState<"scores" | "opinions">("scores");
   const { beachRatings } = useBeaches();
-  const { darkMode } = useTheme(); // ✅ Usar darkMode
+  const { darkMode } = useTheme();
   const router = useRouter();
 
-  const handleOpinar = () => {
-    router.push(`/menu/opinar?playa=${beach.id}`);
-  };
+  const handleOpinar = () => router.push(`/menu/opinar?playa=${beach.id}`);
+  const opiniones = beachRatings[beach.id] ?? [];
 
-  const getIconUrlForScore = (score: number): string => {
-    return beachLevelScoreUrls[`nivel${score}` as keyof typeof beachLevelScoreUrls];
-  };
+  const getIconUrlForScore = (score: number) =>
+    beachLevelScoreUrls[`nivel${score}` as keyof typeof beachLevelScoreUrls];
 
   const getEmojiFinalScore = (score: number) => {
     if (score >= 7) return "😀";
@@ -45,20 +43,18 @@ export default function BeachStatsPanel({
     return "bg-red-600";
   };
 
+  const getTextColorForFinalScore = (score: number) => {
+    if (score >= 7 || score >= 5) return "text-black";
+    return "text-white";
+  };
+
   const getTextColorForBackground = (
     color: "green" | "yellow" | "orange" | "red"
   ): "white" | "black" => {
     return color === "yellow" || color === "green" ? "black" : "white";
   };
 
-  const getTextColorForFinalScore = (
-    score: number
-  ): "text-white" | "text-black" => {
-    if (score >= 7) return "text-black";
-    if (score >= 5) return "text-black";
-    if (score >= 3) return "text-white";
-    return "text-white";
-  };
+  const getUserById = (id: number) => users.find((u) => u.id === id);
 
   if (!beach.scores) {
     return (
@@ -68,9 +64,6 @@ export default function BeachStatsPanel({
     );
   }
 
-  const getUserById = (id: number) => users.find((u) => u.id === id);
-  const opiniones = beachRatings[beach.id] ?? [];
-
   const scores = beach.scores!;
   const score = scores.finalScore;
   const scoreColor = getEmojiColor(score);
@@ -78,10 +71,11 @@ export default function BeachStatsPanel({
 
   return (
     <aside
-      className={`rounded-t-3xl shadow-xl w-full max-w-[700px] mx-auto h-[500px] overflow-y-auto p-4
-        ${darkMode ? "bg-gray-900 text-white" : "bg-white text-black"}`}
+      className={`rounded-t-3xl shadow-xl w-full max-w-[700px] h-[400px] mx-auto max-h-screen flex flex-col
+    ${darkMode ? "bg-gray-900 text-white" : "bg-white text-black"}`}
     >
-      <div className="flex justify-between items-center mb-4">
+      {/* Header */}
+      <div className="flex justify-between items-center p-4 sticky top-0 z-20 bg-inherit">
         <h2 className="text-xl font-bold">{beach.name}</h2>
         <button
           onClick={onClose}
@@ -94,8 +88,9 @@ export default function BeachStatsPanel({
         </button>
       </div>
 
+      {/* Tabs */}
       {opiniones.length > 0 && (
-        <div className="flex space-x-2 mb-4">
+        <div className="flex space-x-2 sticky top-[56px] z-10 bg-inherit px-4 pb-2">
           <button
             onClick={() => setActiveTab("scores")}
             className={`flex-1 py-2 rounded-t-lg font-semibold text-center ${
@@ -127,146 +122,159 @@ export default function BeachStatsPanel({
         </div>
       )}
 
-      {activeTab === "scores" && (
-        <>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
-            <StatItem
-              color={getColor(scores.arena)}
-              icon="🏖️"
-              label="Calidad de Arena"
-              value={scores.arena}
-              textColor={getTextColorForBackground(getColor(scores.arena))}
-              iconUrl={getIconUrlForScore(scores.arena)}
-            />
-            <StatItem
-              color={getColor(scores.agua)}
-              icon="🌊"
-              label="Calidad del Agua"
-              value={scores.agua}
-              textColor={getTextColorForBackground(getColor(scores.agua))}
-              iconUrl={getIconUrlForScore(scores.agua)}
-            />
-            <StatItem
-              color={getColor(scores.concurrencia)}
-              icon="👨‍👩‍👧"
-              label="Concurrencia"
-              value={scores.concurrencia}
-              textColor={getTextColorForBackground(getColor(scores.concurrencia))}
-              iconUrl={getIconUrlForScore(scores.concurrencia)}
-            />
-            <StatItem
-              color={getColor(scores.limpieza)}
-              icon="🧹"
-              label="Limpieza"
-              value={scores.limpieza}
-              textColor={getTextColorForBackground(getColor(scores.limpieza))}
-              iconUrl={getIconUrlForScore(scores.limpieza)}
-            />
-            <StatItem
-              color={getColor(scores.tranquilidad)}
-              icon="☮️"
-              label="Tranquilidad"
-              value={scores.tranquilidad}
-              textColor={getTextColorForBackground(getColor(scores.tranquilidad))}
-              iconUrl={getIconUrlForScore(scores.tranquilidad)}
-            />
-            <StatItem
-              color={getColor(scores.atracciones)}
-              icon="🎡"
-              label="Atracciones"
-              value={scores.atracciones}
-              textColor={getTextColorForBackground(getColor(scores.atracciones))}
-              iconUrl={getIconUrlForScore(scores.atracciones)}
-            />
-          </div>
+      {/* Scrollable Content */}
+      <div className="overflow-y-auto flex-1 px-4 pb-4 pt-[50px]">
+        {activeTab === "scores" && (
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+              <StatItem
+                {...getStatProps("Calidad de Arena", "🏖️", scores.arena)}
+              />
+              <StatItem
+                {...getStatProps("Calidad del Agua", "🌊", scores.agua)}
+              />
+              <StatItem
+                {...getStatProps("Concurrencia", "👨‍👩‍👧", scores.concurrencia)}
+              />
+              <StatItem {...getStatProps("Limpieza", "🧹", scores.limpieza)} />
+              <StatItem
+                {...getStatProps("Tranquilidad", "☮️", scores.tranquilidad)}
+              />
+              <StatItem
+                {...getStatProps("Atracciones", "🎡", scores.atracciones)}
+              />
+            </div>
 
-          <div className={`flex items-center justify-between px-4 py-2 rounded-lg mb-4 ${scoreColor}`}>
-            <span className={`text-2xl ${textColor}`}>{getEmojiFinalScore(score)}</span>
-            <span className={`font-bold ${textColor}`}>
-              Puntuación: {scores.finalScore.toFixed(2)}/10
-            </span>
-          </div>
+            <div
+              className={`flex items-center justify-between px-4 py-2 rounded-lg mb-4 ${scoreColor}`}
+            >
+              <span className={`text-2xl ${textColor}`}>
+                {getEmojiFinalScore(score)}
+              </span>
+              <span className={`font-bold ${textColor}`}>
+                Puntuación: {scores.finalScore.toFixed(2)}/10
+              </span>
+            </div>
 
-          <button
-            onClick={handleOpinar}
-            className={`w-full font-semibold py-2 rounded-lg shadow transition ${
-              darkMode
-                ? "bg-white text-gray-900 hover:bg-gray-200"
-                : "bg-black text-white hover:bg-gray-800"
-            }`}
-          >
-            Opinar
-          </button>
-        </>
-      )}
+            <button
+              onClick={handleOpinar}
+              className={`w-full font-semibold py-2 rounded-lg shadow transition ${
+                darkMode
+                  ? "bg-white text-gray-900 hover:bg-gray-200"
+                  : "bg-black text-white hover:bg-gray-800"
+              }`}
+            >
+              Opinar
+            </button>
+          </>
+        )}
 
-      {activeTab === "opinions" && (
-        <div className="mt-1">
-          <h3 className="text-lg font-semibold mb-2">Opiniones de usuarios</h3>
-          <div className="space-y-4">
-            {opiniones.map((op, idx) => {
-              const user = getUserById(op.userId);
-              const ratingItems: (keyof Rating)[] = [
-                "arena",
-                "agua",
-                "concurrencia",
-                "limpieza",
-                "tranquilidad",
-                "atracciones",
-              ];
+        {activeTab === "opinions" && (
+          <div>
+            <h3 className="text-lg font-semibold mb-2">
+              Opiniones de usuarios
+            </h3>
+            <div className="space-y-4">
+              {opiniones.map((op, idx) => {
+                const user = getUserById(op.userId);
+                const ratingItems: (keyof Rating)[] = [
+                  "arena",
+                  "agua",
+                  "concurrencia",
+                  "limpieza",
+                  "tranquilidad",
+                  "atracciones",
+                ];
 
-              return (
-                <div
-                  key={idx}
-                  className={`rounded-lg shadow px-4 py-3 flex flex-col gap-2 ${
-                    darkMode ? "bg-gray-700" : "bg-white"
-                  }`}
-                >
-                  <div className="flex items-start gap-3">
-                    <Image
-                      src={user?.photo || "/default-user.png"}
-                      alt={user?.username || "Usuario"}
-                      width={40}
-                      height={40}
-                      className="rounded-full object-cover"
-                    />
-                    <div>
-                      <p className={`text-sm font-semibold ${darkMode ? "text-white" : "text-gray-900"}`}>
-                        {user?.username || "Usuario anónimo"}
-                      </p>
-                      <p className={`text-xs ${darkMode ? "text-gray-300" : "text-gray-500"}`}>{op.fecha}</p>
-                      <p className={`mt-1 text-sm ${darkMode ? "text-gray-200" : "text-gray-800"}`}>
-                        {op.comentario}
-                      </p>
+                return (
+                  <div
+                    key={idx}
+                    className={`rounded-lg shadow px-4 py-3 flex flex-col gap-2 ${
+                      darkMode ? "bg-gray-700" : "bg-white"
+                    }`}
+                  >
+                    <div className="flex items-start gap-3">
+                      <Image
+                        src={user?.photo || "/default-user.png"}
+                        alt={user?.username || "Usuario"}
+                        width={40}
+                        height={40}
+                        className="rounded-full object-cover"
+                      />
+                      <div>
+                        <p
+                          className={`text-sm font-semibold ${
+                            darkMode ? "text-white" : "text-gray-900"
+                          }`}
+                        >
+                          {user?.username || "Usuario anónimo"}
+                        </p>
+                        <p
+                          className={`text-xs ${
+                            darkMode ? "text-gray-300" : "text-gray-500"
+                          }`}
+                        >
+                          {op.fecha}
+                        </p>
+                        <p
+                          className={`mt-1 text-sm ${
+                            darkMode ? "text-gray-200" : "text-gray-800"
+                          }`}
+                        >
+                          {op.comentario}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-2">
+                      {ratingItems.map((item) => {
+                        const value = op.rating[item];
+                        const nivel =
+                          `nivel${value}` as keyof typeof beachLevelScoreUrls;
+                        const iconUrl = beachLevelScoreUrls[nivel];
+                        const label =
+                          item.charAt(0).toUpperCase() + item.slice(1);
+
+                        return (
+                          <div key={item} className="flex items-center gap-2">
+                            <span
+                              className={`text-sm ${
+                                darkMode ? "text-gray-200" : "text-gray-700"
+                              }`}
+                            >
+                              {label}:
+                            </span>
+                            <Image
+                              src={iconUrl}
+                              alt={nivel}
+                              width={30}
+                              height={30}
+                            />
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
-
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-2">
-                    {ratingItems.map((item) => {
-                      const value = op.rating[item];
-                      const nivel = `nivel${value}` as keyof typeof beachLevelScoreUrls;
-                      const iconUrl = beachLevelScoreUrls[nivel];
-                      const label = item.charAt(0).toUpperCase() + item.slice(1);
-
-                      return (
-                        <div key={item} className="flex items-center gap-2">
-                          <span className={`text-sm ${darkMode ? "text-gray-200" : "text-gray-700"}`}>
-                            {label}:
-                          </span>
-                          <Image src={iconUrl} alt={nivel} width={30} height={30} />
-                          
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </aside>
   );
+
+  function getStatProps(label: string, icon: string, value: number) {
+    const color = getColor(value);
+    return {
+      color,
+      icon,
+      label,
+      value,
+      iconUrl: getIconUrlForScore(value),
+      textColor: getTextColorForBackground(color),
+    };
+  }
 }
 
 function getColor(score: number): "green" | "yellow" | "orange" | "red" {
@@ -299,7 +307,6 @@ function StatItem({
     orange: "bg-orange-500",
     red: "bg-red-600",
   }[color];
-
   const txt = textColor === "white" ? "text-white" : "text-black";
 
   return (
@@ -309,7 +316,13 @@ function StatItem({
         <span className={`font-bold ${txt}`}>{label.toUpperCase()}</span>
       </div>
       <div className="flex items-center gap-2 font-bold text-xl">
-        <Image src={iconUrl} alt={`Nivel ${value}`} width={70} height={70} className="ml-1" />
+        <Image
+          src={iconUrl}
+          alt={`Nivel ${value}`}
+          width={70}
+          height={70}
+          className="ml-1"
+        />
       </div>
     </div>
   );

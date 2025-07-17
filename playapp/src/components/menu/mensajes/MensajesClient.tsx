@@ -1,3 +1,5 @@
+// /src/components/menu/mensajes/MensajesClient.tsx
+
 "use client";
 
 import { useState } from "react";
@@ -30,15 +32,18 @@ export default function MensajesClient() {
   );
 
   return (
-    <div className={`max-w-md mx-auto p-4 `}>
+    <div className="w-full max-w-md mx-auto p-4 overflow-x-hidden">
       <h2 className="text-xl font-bold mb-4">Mensajes</h2>
 
       <input
         type="text"
         placeholder="Buscar usuario..."
         className={`w-full p-2 mb-4 rounded border outline-none transition-all
-          ${darkMode ? "bg-gray-800 border-gray-700 text-white placeholder-gray-400" : "bg-white border-gray-300 text-black"}
-        `}
+      ${
+        darkMode
+          ? "bg-gray-800 border-gray-700 text-white placeholder-gray-400"
+          : "bg-white border-gray-300 text-black"
+      }`}
         value={search}
         onChange={(e) => setSearch(e.target.value)}
       />
@@ -52,9 +57,9 @@ export default function MensajesClient() {
       {filtered.map((chat) => (
         <div
           key={chat.id}
-          className={`flex items-center gap-3 mb-4 cursor-pointer p-2 rounded-lg transition-colors
-            ${darkMode ? "hover:bg-gray-800" : "hover:bg-gray-100"}
-          `}
+          className={`flex items-start gap-3 mb-4 cursor-pointer p-2 rounded-lg transition-colors
+        ${darkMode ? "hover:bg-gray-800" : "hover:bg-gray-100"}
+      `}
           onClick={() => router.push(`/menu/mensajes/${chat.id}`)}
         >
           <Image
@@ -62,17 +67,24 @@ export default function MensajesClient() {
             alt={chat.username}
             width={50}
             height={50}
-            className="rounded-full"
+            className="rounded-full flex-shrink-0"
           />
-          <div className="flex-1">
-            <h4 className="font-semibold">{chat.username}</h4>
-            <p className={`text-sm truncate ${darkMode ? "text-gray-300" : "text-gray-600"}`}>
+
+          <div className="flex-1 min-w-0 overflow-hidden">
+            <div className="flex items-center justify-between gap-2">
+              <h4 className="font-semibold truncate">{chat.username}</h4>
+              <span className="text-xs text-gray-500 whitespace-nowrap flex-shrink-0">
+                {formatTime(chat.lastMessage.timestamp)}
+              </span>
+            </div>
+            <p
+              className={`text-sm truncate ${
+                darkMode ? "text-gray-300" : "text-gray-600"
+              }`}
+            >
               {chat.lastMessage.text}
             </p>
           </div>
-          <span className="text-xs text-gray-500 whitespace-nowrap">
-            {formatTime(chat.lastMessage.timestamp)}
-          </span>
         </div>
       ))}
     </div>

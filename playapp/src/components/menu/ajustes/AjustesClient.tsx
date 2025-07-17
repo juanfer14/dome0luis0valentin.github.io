@@ -2,34 +2,34 @@
 "use client";
 
 import { useTheme } from "@/app/context/ThemeContext";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function AjustesClient() {
-  const [username, setUsername] = useState("Johanna Doe");
-  const [email, setEmail] = useState("jhon@gmail.com");
-  const [editingName, setEditingName] = useState(false);
-  const [editingMail, setEditingMail] = useState(false);
-  const [emailError, setEmailError] = useState("");
-
   const { darkMode, setDarkMode, fontSize, setFontSize } = useTheme();
 
-  const validateEmail = (email: string) => {
-    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return re.test(email);
+  const [originalUsername, setOriginalUsername] = useState("Johanna Doe");
+  const [username, setUsername] = useState(originalUsername);
+
+  const [originalEmail, setOriginalEmail] = useState("jhon@gmail.com");
+  const [email, setEmail] = useState(originalEmail);
+  const [emailError, setEmailError] = useState("");
+
+  const validateEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+  const hasUsernameChanged = username !== originalUsername;
+  const hasEmailChanged = email !== originalEmail;
+
+  const handleSaveUsername = () => {
+    setOriginalUsername(username);
   };
 
-  const handleEmailButtonClick = () => {
-    if (editingMail) {
-      if (!validateEmail(email)) {
-        setEmailError("Por favor ingresa un email válido.");
-        return;
-      }
-      setEmailError("");
-      setEditingMail(false);
-    } else {
-      setEditingMail(true);
-      setEmailError("");
+  const handleSaveEmail = () => {
+    if (!validateEmail(email)) {
+      setEmailError("Por favor ingresa un email válido.");
+      return;
     }
+    setEmailError("");
+    setOriginalEmail(email);
   };
 
   return (
@@ -39,54 +39,54 @@ export default function AjustesClient() {
       <section className="mb-8">
         <h3 className="text-lg font-semibold mb-2">Usuario</h3>
 
+        {/* Nombre */}
         <label className="block mb-1">Nombre de usuario</label>
         <div className="flex gap-2 items-center">
           <input
             type="text"
             className={`flex-1 border rounded px-3 py-2 outline-none ${
-              editingName
-                ? darkMode
-                  ? "border-white bg-gray-800 text-white"
-                  : "border-black"
-                : "border-gray-300"
+              darkMode
+                ? "border-white bg-gray-800 text-white"
+                : "border-black"
             }`}
             value={username}
-            disabled={!editingName}
             onChange={(e) => setUsername(e.target.value)}
           />
-          <button
-            className={`px-3 py-2 rounded whitespace-nowrap font-semibold ${
-              darkMode ? "bg-white text-black" : "bg-black text-white"
-            }`}
-            onClick={() => setEditingName((prev) => !prev)}
-          >
-            {editingName ? "Guardar" : "Editar"}
-          </button>
+          {hasUsernameChanged && (
+            <button
+              onClick={handleSaveUsername}
+              className={`px-3 py-2 rounded whitespace-nowrap font-semibold ${
+                darkMode ? "bg-white text-black" : "bg-black text-white"
+              }`}
+            >
+              Guardar
+            </button>
+          )}
         </div>
 
+        {/* Email */}
         <label className="block mt-6 mb-1">Email</label>
         <div className="flex gap-2 items-center">
           <input
             type="email"
             className={`flex-1 border rounded px-3 py-2 outline-none ${
-              editingMail
-                ? darkMode
-                  ? "border-white bg-gray-800 text-white"
-                  : "border-black"
-                : "border-gray-300"
+              darkMode
+                ? "border-white bg-gray-800 text-white"
+                : "border-black"
             }`}
             value={email}
-            disabled={!editingMail}
             onChange={(e) => setEmail(e.target.value)}
           />
-          <button
-            className={`px-3 py-2 rounded whitespace-nowrap font-semibold ${
-              darkMode ? "bg-white text-black" : "bg-black text-white"
-            }`}
-            onClick={handleEmailButtonClick}
-          >
-            {editingMail ? "Guardar" : "Editar"}
-          </button>
+          {hasEmailChanged && (
+            <button
+              onClick={handleSaveEmail}
+              className={`px-3 py-2 rounded whitespace-nowrap font-semibold ${
+                darkMode ? "bg-white text-black" : "bg-black text-white"
+              }`}
+            >
+              Guardar
+            </button>
+          )}
         </div>
         {emailError && (
           <p className="text-red-500 mt-1 text-sm">{emailError}</p>

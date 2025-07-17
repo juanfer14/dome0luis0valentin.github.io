@@ -1,3 +1,5 @@
+// /src/components/menu/mensajes/ChatClient.tsx
+
 "use client";
 
 import { useEffect, useState, useRef } from "react";
@@ -52,7 +54,7 @@ export default function ChatClient({ contactId }: { contactId: number }) {
   }
 
   return (
-    <div className="flex flex-col h-screen max-w-md mx-auto" style={{ fontSize }}>
+    <div className="flex flex-col h-screen max-w-md mx-auto" style={{ fontSize, height: 'calc(100vh - 60px)' }}>
       {/* HEADER fijo arriba */}
       <div
         className={`sticky top-0 z-20 flex items-center gap-3 px-4 h-[60px] border-b
