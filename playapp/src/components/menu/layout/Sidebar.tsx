@@ -1,7 +1,9 @@
+// /src/components/menu/layout/Sidebar.tsx
 "use client";
 
 import Image from "next/image";
 import { useTheme } from "@/app/context/ThemeContext";
+import Link from 'next/link';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -52,7 +54,7 @@ export default function Sidebar({ isOpen, onClose, active }: SidebarProps) {
           </div>
 
           <nav className="space-y-4">
-            <a
+            <Link
               href="/menu"
               className={`flex items-center gap-2 px-2 py-2 rounded text-sm font-semibold ${
                 active === "general"
@@ -66,8 +68,8 @@ export default function Sidebar({ isOpen, onClose, active }: SidebarProps) {
             >
               <span>🗺️</span>
               <span>Vista general</span>
-            </a>
-            <a
+            </Link>
+            <Link
               href="/menu/mensajes"
               className={`flex items-center gap-2 px-2 py-2 rounded text-sm ${
                 active === "mensajes"
@@ -88,14 +90,14 @@ export default function Sidebar({ isOpen, onClose, active }: SidebarProps) {
               >
                 2
               </span>
-            </a>
+            </Link>
           </nav>
         </div>
 
         <hr className={`${darkMode ? "border-gray-700" : "border-gray-300"} my-4`} />
 
         <div className="mt-auto space-y-2">
-          <a
+          <Link
             href="/menu/ajustes"
             className={`flex items-center gap-2 px-2 py-2 rounded text-sm ${
               active === "ajustes"
@@ -109,8 +111,8 @@ export default function Sidebar({ isOpen, onClose, active }: SidebarProps) {
           >
             <span>⚙️</span>
             <span>Ajustes</span>
-          </a>
-          <a
+          </Link>
+          <Link
             href="#"
             className={`flex items-center gap-2 px-2 py-2 rounded text-sm ${
               active === "ayuda"
@@ -124,8 +126,8 @@ export default function Sidebar({ isOpen, onClose, active }: SidebarProps) {
           >
             <span>ℹ️</span>
             <span>Ayuda</span>
-          </a>
-          <a
+          </Link>
+          <Link
             href="#"
             className={`flex items-center gap-2 px-2 py-2 rounded text-sm ${
               active === "sobre-nosotros"
@@ -139,8 +141,8 @@ export default function Sidebar({ isOpen, onClose, active }: SidebarProps) {
           >
             <span>👥</span>
             <span>Sobre Nosotros</span>
-          </a>
-          <a
+          </Link>
+          <Link
             href="#"
             className={`flex items-center gap-2 px-2 py-2 text-sm rounded ${
               darkMode
@@ -150,7 +152,7 @@ export default function Sidebar({ isOpen, onClose, active }: SidebarProps) {
           >
             <span>🚪</span>
             <span>Cerrar Sesión</span>
-          </a>
+          </Link>
         </div>
       </aside>
     </>

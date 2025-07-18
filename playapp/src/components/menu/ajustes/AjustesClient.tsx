@@ -2,7 +2,7 @@
 "use client";
 
 import { useTheme } from "@/app/context/ThemeContext";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 export default function AjustesClient() {
   const { darkMode, setDarkMode, fontSize, setFontSize } = useTheme();
